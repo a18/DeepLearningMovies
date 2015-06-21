@@ -2,6 +2,7 @@
 
 #  Author: Angela Chapman
 #  Date: 8/6/2014
+#  Modified by: andy1618@mail.ru
 #
 #  This file contains code to accompany the Kaggle tutorial
 #  "Deep learning goes to the movies".  The code in this file
@@ -14,18 +15,26 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from KaggleWord2VecUtility import KaggleWord2VecUtility
 import pandas as pd
-import numpy as np
+import random
+#import nltk
+#import numpy as np
+
+#TRAIN_ROWS_LIMIT = 1000  # None
+TRAIN_ROWS_LIMIT = None
+RND_SEED = 1
 
 if __name__ == '__main__':
+    random.seed(RND_SEED)
+
     train = pd.read_csv(os.path.join(os.path.dirname(__file__), 'data', 'labeledTrainData.tsv'), header=0, \
-                    delimiter="\t", quoting=3)
+                    delimiter="\t", quoting=3, nrows=TRAIN_ROWS_LIMIT)
     test = pd.read_csv(os.path.join(os.path.dirname(__file__), 'data', 'testData.tsv'), header=0, delimiter="\t", \
                    quoting=3 )
 
     print 'The first review is:'
     print train["review"][0]
 
-    raw_input("Press Enter to continue...")
+    #raw_input("Press Enter to continue...")
 
 
     print 'Download text data sets. If you already have NLTK datasets downloaded, just close the Python download window...'
@@ -39,6 +48,8 @@ if __name__ == '__main__':
 
     print "Cleaning and parsing the training set movie reviews...\n"
     for i in xrange( 0, len(train["review"])):
+        if (i % 100 == 0):
+            print "%d of %d" % (i, len(train["review"]))
         clean_train_reviews.append(" ".join(KaggleWord2VecUtility.review_to_wordlist(train["review"][i], True)))
 
 
@@ -86,6 +97,8 @@ if __name__ == '__main__':
 
     print "Cleaning and parsing the test set movie reviews...\n"
     for i in xrange(0,len(test["review"])):
+        if (i % 100 == 0):
+            print "%d of %d" % (i, len(test["review"]))
         clean_test_reviews.append(" ".join(KaggleWord2VecUtility.review_to_wordlist(test["review"][i], True)))
 
     # Get a bag of words for the test set, and convert to a numpy array
